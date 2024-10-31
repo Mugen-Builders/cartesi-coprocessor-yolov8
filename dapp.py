@@ -1,11 +1,12 @@
-import logging
-import requests
 import json
 import base64
+import logging
+import requests
 import traceback
 from enum import Enum
 from io import BytesIO
 from os import environ
+from eth_abi import encode 
 from computer_vision import ImageAnalyzer
 
 # Set up logging
@@ -30,6 +31,12 @@ def hex2str(hexstr):
     """Decode a hex string into a regular string"""
     return hex2binary(hexstr).decode("utf-8")
 
+def binary2hex(binary):
+    """
+    Encode a binary as an hex string
+    """
+    return "0x" + binary.hex()
+
 def send_notice(notice: dict) -> None:
     response = requests.post(rollup_server + "/notice", json=notice)
     logger.info(f"/notice: Received response status {response.status_code} body {response.content}")
@@ -46,12 +53,9 @@ def decode_verifier_input(binary):
         raise Exception(msg)
 
 def process_image_and_predict_state(real_world_data):
-    buffer = BytesIO()
-    annotated_image, detections = IMAGE_ANALYZER.process_image(real_world_data["base64_image"])
+    _, detections = IMAGE_ANALYZER.process_image(real_world_data["base64_image"])
     out = len(detections)
-    annotated_image.save(buffer, format="JPEG")
-    annotated_image_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
-    send_notice({"payload": str2hex(json.dumps({"image": annotated_image_base64, "detections": str(len(detections))}))})
+    send_notice({"payload": binary2hex(encode(["uint256"], [out]))})
     return out
 
 def verify_real_world_state(binary) -> bool:
@@ -76,7 +80,6 @@ def handle_advance(data):
     except Exception as e:
         msg = f"Error {e} processing data {data}"
         logger.error(f"{msg}\n{traceback.format_exc()}")
-        send_notice({"payload": str2hex(msg)})
         return "reject"
 
 handlers = {
