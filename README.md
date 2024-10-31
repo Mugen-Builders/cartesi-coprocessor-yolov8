@@ -1,4 +1,4 @@
-# Python DApp Template
+# Lilium Coprocessor:
 
-This is a template for Python Cartesi DApps. It uses python3 to execute the backend application.
-The application entrypoint is the `dapp.py` file.
+Operator ID -> a27fc62b85e2e005bfd1adecadbfdddbcee589e0096cf308da3de0eadfd71399;
+CID -> https://w3s.link/ipfs/bafybeicwwk27fpdl2txbhn6tfs675ippa44jxl2gokxs7o2w5nnrrskoia;
