@@ -1,70 +1,57 @@
+import web3
 import json
-import base64
 import logging
 import requests
 import traceback
-from enum import Enum
-from io import BytesIO
 from os import environ
-from eth_abi import encode 
+from eth_abi import encode
 from computer_vision import ImageAnalyzer
 
-# Set up logging
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
-
-# Constants
-rollup_server = environ.get("ROLLUP_HTTP_SERVER_URL")
+rollup_server = environ.get("ROLLUP_HTTP_SERVER_URL") or "http://localhost:5004"
 logger.info(f"HTTP rollup server URL is {rollup_server}")
-
 IMAGE_ANALYZER = ImageAnalyzer("./computer_vision/model/best_float32.tflite")
 
 def str2hex(string):
-    """Encode a string as a hex string"""
     return "0x" + string.encode("utf-8").hex()
 
 def hex2binary(hexstr):
-    """Decode a hex string into a byte string"""
     return bytes.fromhex(hexstr[2:])
 
 def hex2str(hexstr):
-    """Decode a hex string into a regular string"""
     return hex2binary(hexstr).decode("utf-8")
 
 def binary2hex(binary):
-    """
-    Encode a binary as an hex string
-    """
     return "0x" + binary.hex()
+
+MINT_FUNCTION_SELECTOR = bytes.fromhex(web3.Web3().keccak(b'mint(address,uint256)')[:4].hex())
 
 def send_notice(notice: dict) -> None:
     response = requests.post(rollup_server + "/notice", json=notice)
-    logger.info(f"/notice: Received response status {response.status_code} body {response.content}")
-    
-def decode_verifier_input(binary):
+    logger.info(f"/notice: Received response status {response.status_code} body {response.content} for notice {notice}")
+
+def process_image_and_predict_state(sender, base64_image, token_contract):
     try:
-        verifier_data = {
-            "real_world_data": binary.decode("utf-8"),
-        }
-        return verifier_data
+        _, detections = IMAGE_ANALYZER.process_image(base64_image)
+        out = len(detections)
+        encoded_call = MINT_FUNCTION_SELECTOR + encode(["address", "uint256"], [sender, out])
+        send_notice({"payload": binary2hex(encode(["address", "bytes"], [token_contract, encoded_call]))})
+        return out
     except Exception as e:
-        msg = f"Error {e} decoding input {binary}"
-        logger.error(f"{msg}\n{traceback.format_exc()}")
-        raise Exception(msg)
+        logger.error(f"Error processing image: {traceback.format_exc()}")
+        raise e
 
-def process_image_and_predict_state(real_world_data):
-    _, detections = IMAGE_ANALYZER.process_image(real_world_data["base64_image"])
-    out = len(detections)
-    send_notice({"payload": binary2hex(encode(["uint256"], [out]))})
-    return out
-
-def verify_real_world_state(binary) -> bool:
+def verify_real_world_state(sender, binary) -> bool:
     try:
-        decoded_verifier_input = decode_verifier_input(binary)
-        print(decoded_verifier_input["real_world_data"]) 
-        real_world_data = json.loads(decoded_verifier_input["real_world_data"].replace("'", '"'))
-        return True if process_image_and_predict_state(real_world_data) > 0 else False
-
+        decoded_verifier_input = json.loads(binary.decode("utf-8").replace("'", '"'))
+        base64_image = decoded_verifier_input.get("base64_image")
+        token_contract = decoded_verifier_input.get("token_contract")
+        if not base64_image or not token_contract:
+            raise ValueError("Missing required fields in verifier input")
+        logger.info(f"Real world data: {base64_image}")
+        logger.info(f"Token contract: {token_contract}")
+        return process_image_and_predict_state(sender, base64_image, token_contract) > 0
     except Exception as e:
         logger.error(f"Error {e} verifying real world state: {traceback.format_exc()}")
         return False
@@ -75,8 +62,7 @@ def handle_advance(data):
         payload = data["payload"]
         binary = hex2binary(payload)
         sender = data["metadata"]["msg_sender"]
-        return "accept" if verify_real_world_state(binary) else "reject"
-
+        return "accept" if verify_real_world_state(sender, binary) else "reject"
     except Exception as e:
         msg = f"Error {e} processing data {data}"
         logger.error(f"{msg}\n{traceback.format_exc()}")
