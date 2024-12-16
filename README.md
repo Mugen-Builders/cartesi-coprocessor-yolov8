@@ -87,7 +87,6 @@ forge create ./src/Token.sol:Token \
 - Output example:
   
 ```sh
-No files changed, compilation skipped
 Deployer: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 Deployed to: 0x59b670e9fA9D0A427751Af201D676719a970857b
 Transaction hash: 0xdf69c83afff3cf2ad249dca4f69e3f002a5ba185f0558ebd5daecdd8cc7c3fee
@@ -110,10 +109,9 @@ forge create ./src/coprocessor/mock/CoprocessorCallerMock.sol:CoprocessorCallerM
 - Output example:
   
 ```sh
-No files changed, compilation skipped
 Deployer: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 Deployed to: 0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1
-Transaction hash: 0x24390d20b76f1528a2da4fb8c7cae324399bbe7fb28f911db646024b735b6ef0
+Transaction hash: 0x9207bbfc5d041a5769f137705a6689054a9a0dedd1779a42a3d7505d90e22df1
 ```
 
 > [!WARNING]
