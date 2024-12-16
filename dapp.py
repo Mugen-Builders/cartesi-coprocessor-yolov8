@@ -5,13 +5,13 @@ import requests
 import traceback
 from os import environ
 from eth_abi import encode
-# from computer_vision import ImageAnalyzer
+from computer_vision import ImageAnalyzer
 
 logging.basicConfig(level="INFO")
 logger = logging.getLogger(__name__)
 rollup_server = environ.get("ROLLUP_HTTP_SERVER_URL") or "http://localhost:5004"
 logger.info(f"HTTP rollup server URL is {rollup_server}")
-# IMAGE_ANALYZER = ImageAnalyzer("./computer_vision/model/best_float32.tflite")
+IMAGE_ANALYZER = ImageAnalyzer("./computer_vision/model/best_float32.tflite")
 
 def str2hex(string):
     return "0x" + string.encode("utf-8").hex()
@@ -33,9 +33,8 @@ def send_notice(notice: dict) -> None:
 
 def process_image_and_predict_state(sender, base64_image, token_contract):
     try:
-        # _, detections = IMAGE_ANALYZER.process_image(base64_image)
-        # out = len(detections)
-        out = 5
+        _, detections = IMAGE_ANALYZER.process_image(base64_image)
+        out = len(detections)
         encoded_call = bytes.fromhex(MINT_FUNCTION_SELECTOR[2:]) + encode(["address", "uint256"], [sender, out])
         send_notice({"payload": binary2hex(encode(["address", "bytes"], [token_contract, encoded_call]))})
         return out
