@@ -1,6 +1,5 @@
 .cartesi
 .venv
-*.txt
 *.car
 *.car.json
 *.cid
