@@ -21,6 +21,7 @@
   - [Prerequisites](#prerequisites)
   - [Running](#running)
   - [Links](#links)
+  - [Testing](#testing)
 
 ##  Getting Started
 
@@ -131,6 +132,14 @@ cartesi send generic --input=$INPUT --chain-id=31337 --rpc-url=http://localhost:
                      --dapp=0xab7528bb862fB57E8A2BCd567a2e929a0Be56a5e --mnemonic-index=0 \
                      --mnemonic-passphrase="test test test test test test test test test test test junk"
                      
+```
+
+### Testing
+
+1. Contracts:
+
+```sh
+forge test --root ./contracts
 ```
 
 ### Links
