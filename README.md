@@ -46,7 +46,8 @@ npm i -g @cartesi/cli
 4. [Download and Install the latest version of Golang.](https://go.dev/doc/install)
 
 5. Install development node ( Nonodo ):
-```shell
+
+```sh
     npm i -g nonodo
 ```
 
