@@ -20,8 +20,9 @@
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
   - [Running](#running)
-  - [Links](#links)
   - [Testing](#testing)
+  - [Links](#links)
+  - [Demo](#demo)
 
 ##  Getting Started
 
@@ -146,3 +147,7 @@ forge test --root ./contracts
 ### Links
 
 - CID -> https://w3s.link/ipfs/bafybeiamacve3gucm4id5vbplpe2mts4eoznx4kf2h3ode7x7hxxx6ou7i
+
+### Demo
+ 
+https://github.com/user-attachments/assets/e4269830-d04a-42a4-851d-c4fb6dd3d74e
