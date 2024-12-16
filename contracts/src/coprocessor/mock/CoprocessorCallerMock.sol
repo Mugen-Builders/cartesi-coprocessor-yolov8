@@ -4,35 +4,33 @@ pragma solidity ^0.8.28;
 import {ICoprocessorCallback, ICoprocessorOutputs} from "../ICoprocessorCallback.sol";
 import {ICoprocessor} from "../ICoprocessor.sol";
 import {LibError} from "../library/LibError.sol";
-import {IInputBox} from "./IInputBox.sol";
 
 contract CoprocessorCallerMock is ICoprocessorCallback {
     using LibError for bytes;
 
-    address public applicationAddress;
-    address public inputBoxAddress;
     ICoprocessor public coprocessor;
     bytes32 public machineHash;
+
+    mapping(bytes32 => bool) public computationSent;
 
     event ResultReceived(bytes output);
 
     error InvalidOutput();
 
     constructor(
-        address _applicationAddress,
-        address _inputBoxAddress,
         address _coprocessorAddress,
         bytes32 _machineHash
     ) {
-        applicationAddress = _applicationAddress;
-        inputBoxAddress = _inputBoxAddress;
         coprocessor = ICoprocessor(_coprocessorAddress);
         machineHash = _machineHash;
     }
 
     function callCoprocessor(bytes calldata input) external {
-        IInputBox inputBox = IInputBox(inputBoxAddress);
-        inputBox.addInput(applicationAddress, input);
+        bytes32 inputHash = keccak256(input);
+
+        computationSent[inputHash] = true;
+
+        // coprocessor.issueTask(machineHash, input, address(this));
     }
 
     function handleNotice(bytes calldata notice) public {
@@ -60,6 +58,13 @@ contract CoprocessorCallerMock is ICoprocessorCallback {
         bytes32 _payloadHash,
         bytes[] calldata outputs
     ) external override {
+
+        // require(msg.sender == address(coprocessor), "Unauthorized caller");
+
+        require(_machineHash == machineHash, "Machine hash mismatch");
+
+        // require(computationSent[_payloadHash] == true, "Computation not found");
+
         for (uint256 i = 0; i < outputs.length; i++) {
             bytes calldata output = outputs[i];
 
@@ -71,5 +76,6 @@ contract CoprocessorCallerMock is ICoprocessorCallback {
 
             handleNotice(arguments);
         }
+        // delete computationSent[_payloadHash];
     }
 }

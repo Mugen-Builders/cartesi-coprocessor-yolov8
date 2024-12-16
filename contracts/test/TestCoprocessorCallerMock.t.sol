@@ -9,8 +9,7 @@ import {Token} from "../src/Token.sol";
 contract TestCoprocessorCallerMock is Test {
     address caller = vm.addr(4);
 
-    bytes32 machineHash = keccak256(abi.encodePacked("machineHash"));
-    bytes32 payloadHash = keccak256(abi.encodePacked("payloadHash"));
+    bytes32 machineHash = bytes32(0);
 
     Token token;
     CoprocessorCallerMock coprocessorCallerMock;
@@ -18,9 +17,7 @@ contract TestCoprocessorCallerMock is Test {
     function setUp() public {
         token = new Token("Test Token", "TTK");
         coprocessorCallerMock = new CoprocessorCallerMock(
-            address(1),
-            address(2),
-            address(3),
+            address(0),
             machineHash
         );
     }
@@ -34,6 +31,10 @@ contract TestCoprocessorCallerMock is Test {
 
         bytes memory payload = abi.encode(address(token), encoded_tx);
 
+        // coprocessorCallerMock.callCoprocessor(
+        //     payload
+        // );
+
         bytes memory notice = abi.encodeWithSignature("Notice(bytes)", payload);
 
         bytes[] memory outputs = new bytes[](1);
@@ -41,7 +42,7 @@ contract TestCoprocessorCallerMock is Test {
 
         coprocessorCallerMock.coprocessorCallbackOutputsOnly(
             machineHash,
-            payloadHash,
+            keccak256(payload),
             outputs
         );
 
