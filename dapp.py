@@ -30,12 +30,17 @@ MINT_FUNCTION_SELECTOR = hex(int.from_bytes(web3.Web3().keccak(b"mint(address,ui
 def send_notice(notice: dict) -> None:
     response = requests.post(rollup_server + "/notice", json=notice)
     logger.info(f"/notice: Received response status {response.status_code} body {response.content} for notice {notice}")
+    
+def send_voucher(voucher: dict) -> None:
+    response = requests.post(rollup_server + "/voucher", json=voucher)
+    logger.info(f"/voucher: Received response status {response.status_code} body {response.content} for voucher {voucher}")
 
 def process_image_and_predict_state(sender, base64_image, token_contract):
     try:
         _, detections = IMAGE_ANALYZER.process_image(base64_image)
         out = len(detections)
         encoded_call = bytes.fromhex(MINT_FUNCTION_SELECTOR[2:]) + encode(["address", "uint256"], [sender, out])
+        send_voucher({"destination":token_contract, "payload": binary2hex(encoded_call)})
         send_notice({"payload": binary2hex(encode(["address", "bytes"], [token_contract, encoded_call]))})
         return out
     except Exception as e:
