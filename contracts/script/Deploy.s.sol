@@ -12,7 +12,7 @@ contract Deploy is Script {
         bytes32 machineHash = vm.envBytes32("MACHINE_HASH");
 
         vm.startBroadcast();
-        Token token = new Token();
+        Token token = new Token("Carbon", "CBN");
         TreeDetector treeDetector = new TreeDetector(taskIssuerAddress, machineHash);
         vm.stopBroadcast();
 
