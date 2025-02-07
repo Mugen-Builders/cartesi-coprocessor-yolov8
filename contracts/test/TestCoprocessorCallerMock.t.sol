@@ -16,18 +16,11 @@ contract TestCoprocessorCallerMock is Test {
 
     function setUp() public {
         token = new Token("Test Token", "TTK");
-        coprocessorCallerMock = new CoprocessorCallerMock(
-            address(0),
-            machineHash
-        );
+        coprocessorCallerMock = new CoprocessorCallerMock(address(0), machineHash);
     }
 
     function testCallCoprocessorCallerMock() public {
-        bytes memory encoded_tx = abi.encodeWithSignature(
-            "mint(address,uint256)",
-            caller,
-            5
-        );
+        bytes memory encoded_tx = abi.encodeWithSignature("mint(address,uint256)", caller, 5);
 
         bytes memory payload = abi.encode(address(token), encoded_tx);
 
@@ -40,11 +33,7 @@ contract TestCoprocessorCallerMock is Test {
         bytes[] memory outputs = new bytes[](1);
         outputs[0] = notice;
 
-        coprocessorCallerMock.coprocessorCallbackOutputsOnly(
-            machineHash,
-            keccak256(payload),
-            outputs
-        );
+        coprocessorCallerMock.coprocessorCallbackOutputsOnly(machineHash, keccak256(payload), outputs);
 
         uint256 balance = token.balanceOf(caller);
         assertEq(balance, 5);

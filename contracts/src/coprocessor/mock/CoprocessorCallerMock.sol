@@ -17,10 +17,7 @@ contract CoprocessorCallerMock is ICoprocessorCallback {
 
     error InvalidOutput();
 
-    constructor(
-        address _coprocessorAddress,
-        bytes32 _machineHash
-    ) {
+    constructor(address _coprocessorAddress, bytes32 _machineHash) {
         coprocessor = ICoprocessor(_coprocessorAddress);
         machineHash = _machineHash;
     }
@@ -53,12 +50,10 @@ contract CoprocessorCallerMock is ICoprocessorCallback {
         emit ResultReceived(decodedPayload);
     }
 
-    function coprocessorCallbackOutputsOnly(
-        bytes32 _machineHash,
-        bytes32 _payloadHash,
-        bytes[] calldata outputs
-    ) external override {
-
+    function coprocessorCallbackOutputsOnly(bytes32 _machineHash, bytes32 _payloadHash, bytes[] calldata outputs)
+        external
+        override
+    {
         // require(msg.sender == address(coprocessor), "Unauthorized caller");
 
         require(_machineHash == machineHash, "Machine hash mismatch");
