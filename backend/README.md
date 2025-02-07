@@ -4,7 +4,7 @@
 </p>
 <br>
 <div align="center">
-    <i>Driving sustainability with blockchain, IoT, and CV for verified carbon credits.</i>
+    <i>Driving sustainability with blockchain, and CV for verified carbon credits.</i>
 </div>
 <div align="center">
 <b>YOLOv8 running within a RISC-V VM (e.g., the Cartesi Machine) as a Cartesi Coprocessor</b>
