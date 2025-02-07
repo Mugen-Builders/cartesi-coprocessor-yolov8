@@ -32,14 +32,10 @@ contract TestTreeDetector is Test {
 
         treeDetector.runExecution(payload);
 
-        bytes memory encodedTx = abi.encodeWithSignature(
-            "mint(address,uint256)",
-            user,
-            5
-        );
+        bytes memory encodedTx = abi.encodeWithSignature("mint(address,uint256)", user, 5);
 
         bytes memory output = abi.encode(address(token), encodedTx);
-        
+
         bytes memory notice = abi.encodeWithSignature("Notice(bytes)", output);
 
         bytes[] memory outputs = new bytes[](1);
@@ -49,11 +45,7 @@ contract TestTreeDetector is Test {
         emit TreeDetector.ResultReceived(keccak256(payload), output);
 
         vm.prank(address(taskIssuerMock));
-        treeDetector.coprocessorCallbackOutputsOnly(
-            machineHash,
-            keccak256(payload),
-            outputs
-        );
+        treeDetector.coprocessorCallbackOutputsOnly(machineHash, keccak256(payload), outputs);
 
         uint256 balance = token.balanceOf(user);
         assertEq(balance, 5);

@@ -6,7 +6,7 @@ import {CoprocessorAdapter} from "../lib/coprocessor-base-contract/src/Coprocess
 
 contract TreeDetector is CoprocessorAdapter {
     using LibError for bytes;
-    
+
     event ResultReceived(bytes32 payloadHash);
 
     constructor(address _taskIssuerAddress, bytes32 _machineHash)
