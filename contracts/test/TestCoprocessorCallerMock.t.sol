@@ -42,7 +42,7 @@ contract TestTreeDetector is Test {
         outputs[0] = notice;
 
         vm.expectEmit();
-        emit TreeDetector.ResultReceived(keccak256(payload), output);
+        emit TreeDetector.ResultReceived(keccak256(payload));
 
         vm.prank(address(taskIssuerMock));
         treeDetector.coprocessorCallbackOutputsOnly(machineHash, keccak256(payload), outputs);
