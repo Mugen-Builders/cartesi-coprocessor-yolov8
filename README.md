@@ -15,6 +15,9 @@
 	<img src="https://img.shields.io/github/last-commit/henriquemarlon/lilium-coprocessor?style=default&logo=git&logoColor=white&color=868380" alt="last-commit">
 </p>
 
+- CLI + devnet;
+- CLI + testnet;
+
 ##  Table of Contents
 
 - [Getting Started](#getting-started)
