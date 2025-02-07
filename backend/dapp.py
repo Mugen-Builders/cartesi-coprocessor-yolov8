@@ -1,7 +1,6 @@
 import web3
 import json
 import sha3
-import base64
 import logging
 import requests
 import traceback
