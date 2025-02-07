@@ -1,41 +1,61 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {Test} from "forge-std/Test.sol";
-import {console} from "forge-std/console.sol";
-import {CoprocessorCallerMock} from "../src/coprocessor/mock/CoprocessorCallerMock.sol";
 import {Token} from "../src/Token.sol";
+import {Test, console} from "forge-std/Test.sol";
+import {TreeDetector} from "../src/TreeDetector.sol";
+import {TaskIssuerMock} from "./mock/TaskIssuerMock.sol";
 
-contract TestCoprocessorCallerMock is Test {
-    address caller = vm.addr(4);
+contract TestTreeDetector is Test {
+    address user = vm.addr(4);
 
     bytes32 machineHash = bytes32(0);
 
     Token token;
-    CoprocessorCallerMock coprocessorCallerMock;
+    TreeDetector treeDetector;
+    TaskIssuerMock taskIssuerMock;
 
     function setUp() public {
         token = new Token("Test Token", "TTK");
-        coprocessorCallerMock = new CoprocessorCallerMock(address(0), machineHash);
+        taskIssuerMock = new TaskIssuerMock();
+        treeDetector = new TreeDetector(address(taskIssuerMock), machineHash);
     }
 
-    function testCallCoprocessorCallerMock() public {
-        bytes memory encoded_tx = abi.encodeWithSignature("mint(address,uint256)", caller, 5);
+    function testCallTreeDetectorWithAValidInput() public {
+        string memory root = vm.projectRoot();
+        string memory path = string.concat(root, "/test/input.json");
+        string memory rawPayload = vm.readFile(path);
+        bytes memory payload = bytes(rawPayload);
 
-        bytes memory payload = abi.encode(address(token), encoded_tx);
+        vm.expectEmit();
+        emit TaskIssuerMock.TaskIssued(machineHash, payload, address(treeDetector));
 
-        // coprocessorCallerMock.callCoprocessor(
-        //     payload
-        // );
+        treeDetector.runExecution(payload);
 
-        bytes memory notice = abi.encodeWithSignature("Notice(bytes)", payload);
+        bytes memory encodedTx = abi.encodeWithSignature(
+            "mint(address,uint256)",
+            user,
+            5
+        );
+
+        bytes memory output = abi.encode(address(token), encodedTx);
+        
+        bytes memory notice = abi.encodeWithSignature("Notice(bytes)", output);
 
         bytes[] memory outputs = new bytes[](1);
         outputs[0] = notice;
 
-        coprocessorCallerMock.coprocessorCallbackOutputsOnly(machineHash, keccak256(payload), outputs);
+        vm.expectEmit();
+        emit TreeDetector.ResultReceived(keccak256(payload), output);
 
-        uint256 balance = token.balanceOf(caller);
+        vm.prank(address(taskIssuerMock));
+        treeDetector.coprocessorCallbackOutputsOnly(
+            machineHash,
+            keccak256(payload),
+            outputs
+        );
+
+        uint256 balance = token.balanceOf(user);
         assertEq(balance, 5);
     }
 }
