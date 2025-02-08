@@ -14,7 +14,15 @@ contract TreeDetector is CoprocessorAdapter {
     {}
 
     function runExecution(bytes calldata input) external {
-        callCoprocessor(input);
+        bytes memory data = abi.encode(msg.sender, input);
+        this._callCoprocessor(data);
+    }
+
+    function _callCoprocessor(bytes calldata data) external {
+        if (msg.sender != address(this)) {
+            revert UnauthorizedCaller(msg.sender);
+        }
+        callCoprocessor(data);
     }
 
     function handleNotice(bytes32 payloadHash, bytes memory notice) internal override {
@@ -26,10 +34,7 @@ contract TreeDetector is CoprocessorAdapter {
         bytes memory encodedTx;
         (destination, encodedTx) = abi.decode(abiCall, (address, bytes));
 
-        bool success;
-        bytes memory returndata;
-
-        (success, returndata) = destination.call(encodedTx);
+        (bool success, bytes memory returndata) = destination.call(encodedTx);
 
         if (!success) {
             returndata.raise();

@@ -25,13 +25,17 @@ contract TestTreeDetector is Test {
     function testCallTreeDetectorWithAValidInput() public {
         string memory root = vm.projectRoot();
         string memory path = string.concat(root, "/test/input.json");
-        string memory rawPayload = vm.readFile(path);
-        bytes memory payload = bytes(rawPayload);
+        string memory rawInput = vm.readFile(path);
+        bytes memory input = bytes(rawInput);
+
+        bytes memory payload = abi.encode(user, input);
+        console.logBytes(payload);
 
         vm.expectEmit();
         emit TaskIssuerMock.TaskIssued(machineHash, payload, address(treeDetector));
 
-        treeDetector.runExecution(payload);
+        vm.prank(user);
+        treeDetector.runExecution(input);
 
         bytes memory encodedTx = abi.encodeWithSignature("mint(address,uint256)", user, 5);
 

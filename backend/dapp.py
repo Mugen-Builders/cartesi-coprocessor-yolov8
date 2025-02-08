@@ -6,7 +6,7 @@ import requests
 import traceback
 from io import BytesIO
 from os import environ
-from eth_abi import encode
+from eth_abi import encode, decode
 from computer_vision import ImageAnalyzer
 
 logging.basicConfig(level="INFO")
@@ -50,12 +50,10 @@ def put_image_keccak256(data: bytes):
 
 def process_image_and_predict_state(sender, base64_image, token_contract):
     try:
-        # Process the image using your image analyzer (assuming base64 input)
         annotated_image, detections = IMAGE_ANALYZER.process_image(base64_image)
-        out = len(detections)
+        detectionsLength = len(detections)
 
-        # Mint tokens for each detected object.
-        encoded_call = bytes.fromhex(MINT_FUNCTION_SELECTOR[2:]) + encode(["address", "uint256"], [sender, out])
+        encoded_call = bytes.fromhex(MINT_FUNCTION_SELECTOR[2:]) + encode(["address", "uint256"], [sender, detectionsLength])
         abi_encoded_call = encode(["address", "bytes"], [token_contract, encoded_call])
 
         buffer = BytesIO()
@@ -68,7 +66,7 @@ def process_image_and_predict_state(sender, base64_image, token_contract):
         send_notice({
             "payload": binary2hex(encode(["bytes32", "bytes"], [bytes.fromhex(imageHash), abi_encoded_call]))
         })
-        return out
+        return detectionsLength
     except Exception as e:
         logger.error(f"Error processing image: {traceback.format_exc()}")
         raise e
@@ -95,8 +93,9 @@ def handle_advance(data):
     try:
         payload = data["payload"]
         binary = hex2binary(payload)
-        sender = data["metadata"]["msg_sender"]
-        return "accept" if verify_real_world_state(sender, binary) else "reject"
+        (sender, payload) = decode(["address", "bytes"], binary)
+
+        return "accept" if verify_real_world_state(sender, payload) else "reject"
     except Exception as e:
         msg = f"Error {e} processing data {data}"
         logger.error(f"{msg}\n{traceback.format_exc()}")
