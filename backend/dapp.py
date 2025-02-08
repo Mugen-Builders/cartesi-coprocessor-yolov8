@@ -56,17 +56,18 @@ def process_image_and_predict_state(sender, base64_image, token_contract):
 
         # Mint tokens for each detected object.
         encoded_call = bytes.fromhex(MINT_FUNCTION_SELECTOR[2:]) + encode(["address", "uint256"], [sender, out])
-        send_notice({
-            "payload": binary2hex(encode(["address", "bytes"], [token_contract, encoded_call]))
-        })
+        abi_encoded_call = encode(["address", "bytes"], [token_contract, encoded_call])
 
         buffer = BytesIO()
         annotated_image.save(buffer, format="JPEG")
         jpeg_data = buffer.getvalue()
-
-        hash = put_image_keccak256(jpeg_data)
-        logger.info(f"Image hash: {hash}")
-
+        
+        imageHash = put_image_keccak256(jpeg_data)
+        print(f"Image hash: {imageHash}")
+        
+        send_notice({
+            "payload": binary2hex(encode(["bytes32", "bytes"], [bytes.fromhex(imageHash), abi_encoded_call]))
+        })
         return out
     except Exception as e:
         logger.error(f"Error processing image: {traceback.format_exc()}")

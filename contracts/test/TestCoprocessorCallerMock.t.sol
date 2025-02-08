@@ -9,7 +9,8 @@ import {TaskIssuerMock} from "./mock/TaskIssuerMock.sol";
 contract TestTreeDetector is Test {
     address user = vm.addr(4);
 
-    bytes32 machineHash = bytes32(0);
+    bytes32 machineHash = bytes32("0x1235");
+    bytes32 imageHash = bytes32("0x1234");
 
     Token token;
     TreeDetector treeDetector;
@@ -34,7 +35,9 @@ contract TestTreeDetector is Test {
 
         bytes memory encodedTx = abi.encodeWithSignature("mint(address,uint256)", user, 5);
 
-        bytes memory output = abi.encode(address(token), encodedTx);
+        bytes memory abiCall = abi.encode(address(token), encodedTx);
+
+        bytes memory output = abi.encode(imageHash, abiCall);
 
         bytes memory notice = abi.encodeWithSignature("Notice(bytes)", output);
 
@@ -42,7 +45,7 @@ contract TestTreeDetector is Test {
         outputs[0] = notice;
 
         vm.expectEmit();
-        emit TreeDetector.ResultReceived(keccak256(payload));
+        emit TreeDetector.ResultReceived(keccak256(payload), imageHash);
 
         vm.prank(address(taskIssuerMock));
         treeDetector.coprocessorCallbackOutputsOnly(machineHash, keccak256(payload), outputs);

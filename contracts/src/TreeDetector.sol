@@ -7,7 +7,7 @@ import {CoprocessorAdapter} from "../lib/coprocessor-base-contract/src/Coprocess
 contract TreeDetector is CoprocessorAdapter {
     using LibError for bytes;
 
-    event ResultReceived(bytes32 payloadHash);
+    event ResultReceived(bytes32 payloadHash, bytes32 imageHash);
 
     constructor(address _taskIssuerAddress, bytes32 _machineHash)
         CoprocessorAdapter(_taskIssuerAddress, _machineHash)
@@ -18,10 +18,13 @@ contract TreeDetector is CoprocessorAdapter {
     }
 
     function handleNotice(bytes32 payloadHash, bytes memory notice) internal override {
+        bytes32 imageHash;
+        bytes memory abiCall;
+        (imageHash, abiCall) = abi.decode(notice, (bytes32, bytes));
+
         address destination;
         bytes memory encodedTx;
-
-        (destination, encodedTx) = abi.decode(notice, (address, bytes));
+        (destination, encodedTx) = abi.decode(abiCall, (address, bytes));
 
         bool success;
         bytes memory returndata;
@@ -32,6 +35,6 @@ contract TreeDetector is CoprocessorAdapter {
             returndata.raise();
         }
 
-        emit ResultReceived(payloadHash);
+        emit ResultReceived(payloadHash, imageHash);
     }
 }
