@@ -15,9 +15,6 @@
 	<img src="https://img.shields.io/github/last-commit/henriquemarlon/coprocessor-tree-detector?style=default&logo=git&logoColor=white&color=868380" alt="last-commit">
 </p>
 
-> [!CAUTION]
-> placeholder.
-
 ##  Table of Contents
 
 - [Prerequisites](#prerequisites)
