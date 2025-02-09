@@ -54,6 +54,9 @@ npm i -g @cartesi/cli
 cartesi-coprocessor publish --network devnet
 ```
 
+> [!WARNING]
+> placeholder.
+
 3. Deploy TreeDetector.sol and Token.sol contract:
    
 ```sh
@@ -61,23 +64,12 @@ make detector
 ```
 
 > [!WARNING]
-> Replace the argument `<token-contract-address>` with the deployed contract address shown in the previous output.
+> placeholder.
 
-4. Deploy CoprocessorCallerMock contract:
+4. Running the frontend:
 
 ```sh
-forge create ./src/coprocessor/mock/CoprocessorCallerMock.sol:CoprocessorCallerMock \
-        --private-key 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80 \
-        --rpc-url http://localhost:8545 \
-        --root ./contracts \
-        --constructor-args 0x0000000000000000000000000000000000000000 \
-                           0x0000000000000000000000000000000000000000000000000000000000000000
+npm run dev
 ```
 
-- Output example:
-  
-```sh
-Deployer: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
-Deployed to: 0x4ed7c70F96B99c776995fB64377f0d4aB3B0e1C1
-Transaction hash: 0x9207bbfc5d041a5769f137705a6689054a9a0dedd1779a42a3d7505d90e22df1
-```
+### Demo
