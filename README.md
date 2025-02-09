@@ -92,6 +92,6 @@ npm run dev
 ```
 
 > [!NOTE]
-> Although this README provides instructions for the devnet environment, this application can be deployed on testnet and hosted on an infrastructure provided for the Experimental Week. Follow the intructions provided [here](https://docs.mugen.builders/cartesi-co-processor-tutorial/deploy)
+> Although this README provides instructions for the devnet environment, this application can be deployed on testnet and hosted on an infrastructure provided for the Experimental Week. Follow the intructions provided [here](https://docs.mugen.builders/cartesi-co-processor-tutorial/deploy).
 
 ### Demo
