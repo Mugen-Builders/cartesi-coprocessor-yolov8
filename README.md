@@ -11,8 +11,8 @@
 </div>
 <br>
 <p align="center">
-	<img src="https://img.shields.io/github/license/Mugen-Builders/cartes-coprocessor-yolov8?style=default&logo=opensourceinitiative&logoColor=white&color=79F7FA" alt="license">
-	<img src="https://img.shields.io/github/last-commit/Mugen-Builders/cartes-coprocessor-yolov8?style=default&logo=git&logoColor=white&color=868380" alt="last-commit">
+	<img src="https://img.shields.io/github/license/Mugen-Builders/cartesi-coprocessor-yolov8?style=default&logo=opensourceinitiative&logoColor=white&color=79F7FA" alt="license">
+	<img src="https://img.shields.io/github/last-commit/Mugen-Builders/cartesi-coprocessor-yolov8?style=default&logo=git&logoColor=white&color=868380" alt="last-commit">
 </p>
 
 ##  Table of Contents
