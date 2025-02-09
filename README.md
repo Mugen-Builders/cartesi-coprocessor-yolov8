@@ -59,7 +59,7 @@ cd coprocessor
 cartesi-coprocessor publish --network devnet
 ```
 
-3. Deploy TreeDetector.sol and Token.sol contract:
+3. Deploy `TreeDetector.sol` and `Token.sol` contract:
 
 > [!WARNING]
 > placeholder.
