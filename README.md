@@ -80,7 +80,7 @@ make detector
 4. Run the frontend:
 
 > [!WARNING]
-> Before run the frontend, please update the `.env.local` file with the LlamaAgent address deployed:
+> Before run the frontend, please update the `.env.local` file with the TreeDetector and Token addresses deployed:
 > ```bash
 > NEXT_PUBLIC_PROJECT_ID="e47c5026ed6cf8c2b219df99a94f60f4"
 > NEXT_PUBLIC_TOKEN_CONTRACT=""
