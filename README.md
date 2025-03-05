@@ -7,7 +7,7 @@
     <i>An EVM Linux-powered coprocessor as an tree image detector</i>
 </div>
 <div align="center">
-<b>Tree image detector YOLOv8 based model powered by EigenLayer cryptoeconomic security</b>
+<b>Tree image detector YOLOv8 based computer vision model powered by EigenLayer cryptoeconomic security</b>
 </div>
 <br>
 <p align="center">
